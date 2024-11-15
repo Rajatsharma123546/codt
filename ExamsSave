@@ -1,0 +1,148 @@
+import React, { useState } from 'react';
+
+const ExamForm = () => {
+  const [formData, setFormData] = useState({
+    title: '',
+    subject: '',
+    exam_date: '',
+    total_marks: '',
+    applicable_class: '',
+    notes: '',
+    timetable_path: '',
+    schoolcode: '',
+    teacheremail: ''
+  });
+
+  const [message, setMessage] = useState('');
+
+  // Handle form input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Prepare the data to be sent
+    const requestData = { ...formData };
+
+    try {
+      const response = await fetch('http://yourserver.com/api/saveExam.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        setMessage('Exam data saved successfully!');
+      } else {
+        setMessage(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      setMessage('Error submitting form. Please try again later.');
+      console.error('Error:', error);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Submit Exam Data</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Title</label>
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label>Subject</label>
+          <input
+            type="text"
+            name="subject"
+            value={formData.subject}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label>Exam Date</label>
+          <input
+            type="date"
+            name="exam_date"
+            value={formData.exam_date}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label>Total Marks</label>
+          <input
+            type="number"
+            name="total_marks"
+            value={formData.total_marks}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label>Applicable Class</label>
+          <input
+            type="text"
+            name="applicable_class"
+            value={formData.applicable_class}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label>Notes</label>
+          <textarea
+            name="notes"
+            value={formData.notes}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label>Timetable Path</label>
+          <input
+            type="text"
+            name="timetable_path"
+            value={formData.timetable_path}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label>School Code</label>
+          <input
+            type="text"
+            name="schoolcode"
+            value={formData.schoolcode}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label>Teacher Email</label>
+          <input
+            type="email"
+            name="teacheremail"
+            value={formData.teacheremail}
+            onChange={handleChange}
+          />
+        </div>
+        <button type="submit">Submit</button>
+      </form>
+
+      {message && <p>{message}</p>}
+    </div>
+  );
+};
+
+export default ExamForm;
